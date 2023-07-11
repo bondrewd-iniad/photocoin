@@ -1,47 +1,40 @@
+// https://eslint.org/docs/user-guide/configuring
+
 module.exports = {
   root: true,
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'prettier',
-  ],
-  plugins: ['@typescript-eslint', 'react'],
-  parser: '@typescript-eslint/parser',
+  parser: 'babel-eslint',
+  parserOptions: {
+    sourceType: 'module'
+  },
   env: {
     browser: true,
-    node: true,
-    es6: true,
   },
-  settings: {
-    react: {
-      version: 'detect',
-    },
+  extends: 'airbnb-base',
+  // required to lint *.vue files
+  plugins: [
+    'html'
+  ],
+  // check if imports actually resolve
+  'settings': {
+    'import/resolver': {
+      'webpack': {
+        'config': 'build/webpack.base.conf.js'
+      }
+    }
   },
-  parserOptions: {
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
-    'react/no-unknown-property': 'off',
-    'react/self-closing-comp': 'error',
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'error',
-    eqeqeq: 'error',
-    'object-shorthand': ['error', 'always'],
-    'prefer-template': 'error',
-    '@typescript-eslint/consistent-type-imports': 'error',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-non-null-assertion': 'error',
-    complexity: ['error', 5],
-    'max-depth': ['error', 1],
-    'max-nested-callbacks': ['error', 3],
-    'max-lines': ['error', 200],
-  },
-};
+  // add your custom rules here
+  'rules': {
+    // don't require .vue extension when importing
+    'import/extensions': ['error', 'always', {
+      'js': 'never',
+      'vue': 'never'
+    }],
+    // allow optionalDependencies
+    'import/no-extraneous-dependencies': ['error', {
+      'optionalDependencies': ['test/unit/index.js']
+    }],
+    // allow debugger during development
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    'no-console': process.env.NODE_ENV === 'production' ? 2 : 0,
+  }
+}
