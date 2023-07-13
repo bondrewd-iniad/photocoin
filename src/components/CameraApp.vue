@@ -14,7 +14,7 @@
     </div>
 
     <div class="blackFilter" ref="blackFilter"/>
-    <CheckImage v-if="checking" :onCancel="onCancel" :onChangeThreshold="onChangeThreshold" :onDecide="onDecide" :threshold="threshold" :radius="radius" :imageData="imageData"/>
+    <CheckImage v-if="checking" :onCancel="onCancel" :onChangeThreshold="onChangeThreshold" :onDecide="onDecide" :threshold="threshold" :imageData="imageData"/>
   </div>
 </template>
 
@@ -26,7 +26,7 @@ import osType from '@/utils/osType';
 import ThresholdBar from '@/components/ThresholdBar';
 
 export default {
-  props: ['onClose', 'onSet', 'threshold', 'onChangeThreshold', 'radius'],
+  props: ['onClose', 'onSet', 'threshold', 'onChangeThreshold'],
   components: { CheckImage, ThresholdBar },
   data() {
     return {
@@ -82,7 +82,7 @@ export default {
       ctx.drawImage(this.$refs.video, (this.vw - length) / 2, (this.vh - length) / 2,
         length, length, 0, 0, length, length);
       const imageData = ctx.getImageData(0, 0, length, length);
-      ctx.putImageData(detectCanvas(imageData, this.threshold, this.radius, 0), 0, 0);
+      ctx.putImageData(detectCanvas(imageData, this.threshold, 0), 0, false);
       this.reqID = requestAnimationFrame(this.render.bind(this));
     },
     closeApp() {
@@ -98,7 +98,7 @@ export default {
         this.$refs.blackFilter.style.display = 'none';
         this.$refs.blackFilter.style.opacity = 1;
 
-        const length = this.length * this.radius;
+        const length = this.length;
         const ctx = this.ctx;
 
         ctx.drawImage(this.$refs.video, (this.vw - length) / 2, (this.vh - length) / 2,

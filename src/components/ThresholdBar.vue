@@ -1,44 +1,51 @@
 <template>
-  <div class="seekBarFrame">
+  <div
+    class="seekBarFrame"
+    @touchstart.prevent="handleSeekStart"
+    @mousedown.prevent="handleSeekStart"
+    @touchmove="handleSeek"
+    @mousemove="handleSeek"
+    @touchend="handleSeekEnd"
+    @mouseup="handleSeekEnd"
+  >
     <div class="seekBar">
-      <div class="progress" :style="{width: value / 256 * 100 + '%'}">
+      <div class="progress" :style="{width: value / max * 100 + '%'}">
         <div class="circle"/>
       </div>
     </div>
-    <div class="seekAbleArea"
-      :style="{ height: this.seeking ? '500px' : '100%' }"
-      @touchstart.prevent="handleSeekStart"
-      @mousedown.prevent="handleSeekStart"
-      @touchmove="handleSeek"
-      @mousemove="handleSeek"
-      @touchend="handleSeekEnd"
-      @mouseup="handleSeekEnd"
-    />
+    <div class="seekAbleArea" :style="{ position: this.seeking ? 'fixed' : 'absolute' }"/>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['value', 'onChange'],
+  props: ['value', 'onChange', 'onSeekStart', 'onSeekEnd'],
   data() {
     return {
       seeking: false,
     };
   },
+  computed: {
+    max: () => 255,
+  },
   methods: {
     handleSeekStart(e) {
       this.seeking = true;
       this.handleSeek(e);
+      this.onSeekStart();
     },
     handleSeek(e) {
       if (!this.seeking) return;
 
       const x = typeof e.clientX === 'number' ? e.clientX : e.touches[0].pageX;
-      const t = ((x - e.target.getBoundingClientRect().left) / e.target.clientWidth) * 256;
-      this.onChange(Math.max(0, Math.min(256, t)));
+      const t = ((x - e.target.parentNode.getBoundingClientRect().left)
+        / e.target.parentNode.clientWidth)
+        * this.max;
+      this.onChange(Math.max(0, Math.min(this.max, t)));
     },
     handleSeekEnd() {
       this.seeking = false;
+      this.onSeekEnd();
     },
   },
 };
@@ -52,6 +59,7 @@ export default {
   width: 80%;
   left: 10%;
   height: 30px;
+  cursor: pointer;
 }
 
 .seekBarFrame:hover > .seekBar {
@@ -91,10 +99,9 @@ export default {
 }
 
 .seekAbleArea {
-  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  cursor: pointer;
+  height: 100%;
 }
 </style>

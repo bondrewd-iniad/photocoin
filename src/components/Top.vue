@@ -20,6 +20,7 @@
 <script>
 import loadImage from 'blueimp-load-image';
 import ThreeCtrl from '@/threejs/ThreeCtrl';
+import detectCanvas from '@/utils/detectCanvas';
 
 export default {
   props: ['onStart', 'onInput'],
@@ -69,14 +70,17 @@ export default {
     image.src = './image/default.png';
     image.onload = () => {
       const canvas = document.createElement('canvas');
-      const length = image.width * 1.1;
+      const length = image.width;
       canvas.width = length;
       canvas.height = length;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, length, length);
       ctx.drawImage(image, (length - image.width) / 2, (length - image.height) / 2);
-      this.threeCtrl = new ThreeCtrl(this.$refs.container, ctx.getImageData(0, 0, length, length));
+      this.threeCtrl = new ThreeCtrl(
+        this.$refs.container,
+        detectCanvas(ctx.getImageData(0, 0, length, length), 238, true),
+      );
     };
   },
   destroyed() {

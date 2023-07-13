@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <Top v-if="mode === 0" :onStart="openCamApp" :onInput="inputFile"/>
-    <CameraApp v-if="mode === 1" :onClose="closeCamApp" :onSet="setImageData" :onChangeThreshold="changeThreshold" :threshold="threshold" :radius="radius"/>
-    <CheckImage v-if="mode === 2" :onCancel="closeCamApp" :onChangeThreshold="changeThreshold" :onDecide="setImageData" :threshold="threshold" :radius="radius" :imageData="imageData"/>
-    <Viewer v-if="mode === 3" :imageData="imageData" :onClose="closeCamApp"/>
+    <Top v-if="mode === 0" :onStart="openCamApp" :onInput="setImageData"/>
+    <CameraApp v-if="mode === 1" :onClose="closeCamApp" :onSet="setImageData" :onChangeThreshold="changeThreshold" :threshold="threshold"/>
+    <!-- <CheckImage v-if="mode === 2" :onCancel="closeCamApp" :onChangeThreshold="changeThreshold" :onDecide="setImageData" :threshold="threshold" :imageData="imageData"/> -->
+    <Viewer v-if="mode === 3" :imageData="imageData" :isImage="true" :onClose="closeCamApp"/>
     <HeaderBar v-show="mode === 0 || mode === 3"/>
   </div>
 </template>
@@ -28,7 +28,6 @@ export default {
       mode: 0, // 1: camera app, 2: chacking image, 3: three.js
       imageData: null,
       threshold: 120,
-      radius: 0.9,
     };
   },
   methods: {
@@ -37,10 +36,6 @@ export default {
     },
     closeCamApp() {
       this.mode = 0;
-    },
-    inputFile(imageData) {
-      this.mode = 2;
-      this.imageData = imageData;
     },
     setImageData(imageData) {
       this.mode = 3;
@@ -68,6 +63,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #223;
 }
 </style>

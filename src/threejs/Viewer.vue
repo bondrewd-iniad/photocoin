@@ -3,8 +3,14 @@
     <div class="main" :style="{ backgroundImage: 'url(./image/back.jpg)' }">
       <div class="container" ref="container"/>
       <div class="btnFrame">
-        <div class="btn" @click="onSavePng">Save PNG</div>
-        <div class="btn" @click="onSaveGif">Save GIF</div>
+        <ThresholdBar
+          :value="threshold"
+          :onChange="onChangeThreshold"
+          :onSeekStart="onSeekStart"
+          :onSeekEnd="onSeekEnd"
+        />
+        <div class="btn" @click="onSavePng">Save as PNG</div>
+        <div class="btn" @click="onSaveGif">Save as GIF</div>
         <div class="btn" @click="onClose">TOP</div>
       </div>
     </div>
@@ -13,27 +19,27 @@
         <div v-if="isSafari" class="safariText">Press and hold to save image</div>
         <img :src="url"/>
       </div>
-      <div class="social">
-        <a class="twitter-share-button" href="https://twitter.com/share" data-dnt="true" data-size="large"/>
-      </div>
       <div class="closeBtn" @click="closeSaveArea">Close</div>
     </div>
   </div>
 </template>
 
 <script>
+import detectCanvas from '@/utils/detectCanvas';
+import ThresholdBar from '@/components/ThresholdBar';
 import ThreeCtrl from './ThreeCtrl';
 
 const { saveAs } = require('file-saver');
 const platform = require('platform');
 
 export default {
-  props: ['imageData', 'onClose'],
+  components: { ThresholdBar },
+  props: ['imageData', 'onClose', 'isImage'],
   data() {
     return {
+      threshold: 256,
       threeCtrl: null,
       url: null,
-      snsInit: false,
       isSafari: platform.name === 'Safari',
     };
   },
@@ -44,18 +50,29 @@ export default {
     onSaveGif() {
       this.threeCtrl.getGifBlob(blob => this.saveImage(blob, 'gif'));
     },
+    onChangeThreshold(threshold) {
+      this.threshold = threshold;
+      this.threeCtrl.updateTexture(detectCanvas(
+        {
+          data: new Uint8Array(this.imageData.data),
+          width: this.imageData.width,
+        },
+        this.threshold,
+        this.isImage,
+      ));
+    },
+    onSeekStart() {
+      this.threeCtrl.stopRotate();
+    },
+    onSeekEnd() {
+      this.threeCtrl.startRotate();
+    },
     saveImage(blob, type) {
       const name = `photocoin.${type}`;
       if (!this.isSafari) saveAs(blob, name);
 
       this.url = URL.createObjectURL(new File([blob], name, { type: `image/${type}` }));
       setTimeout(() => this.threeCtrl.pause());
-
-      if (!this.snsInit) {
-        /* global twttr */
-        twttr.widgets.load(this.$refs.saveArea);
-        this.snsInit = true;
-      }
     },
     closeSaveArea() {
       this.threeCtrl.play();
@@ -114,7 +131,7 @@ export default {
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  background: rgba(255, 255, 255, 0.9);
+  background: #fff;
   padding: 20px 0 50px;
   box-sizing: border-box;
   color: #222;
@@ -129,10 +146,6 @@ export default {
   width: 500px;
   max-width: 80%;
   margin: 10px auto 0;
-}
-
-.social {
-  margin: 20px 0 50px;
 }
 
 .closeBtn {
@@ -157,12 +170,5 @@ export default {
   .btn {
     font-size: 18px;
   }
-}
-</style>
-
-<style>
-.social > iframe {
-  vertical-align: bottom;
-  margin-left: 10px;
 }
 </style>

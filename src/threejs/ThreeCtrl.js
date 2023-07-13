@@ -17,10 +17,9 @@ function formatImageData(imageData) {
 export default class {
   constructor(container, imageData) {
     this.container = container;
-    this.imageData = imageData;
-
     this.renderer = null;
     this.scene = null;
+    this.texture = null;
     this.material = null;
     this.camera = null;
     this.cameraCtrl = null;
@@ -28,6 +27,7 @@ export default class {
 
     this.initRenderer();
     this.initScene();
+    this.initTexture(imageData);
     this.initMaterial();
     this.initCoinRing();
     this.initCoinPattern();
@@ -55,6 +55,20 @@ export default class {
   initScene() {
     this.scene = new THREE.Scene();
     // this.scene.add(new THREE.AxisHelper(RADIUS * 3));
+  }
+
+  initTexture(imageData) {
+    const texture = new THREE.DataTexture(formatImageData(imageData),
+      imageData.width, imageData.height, THREE.RGBAFormat, THREE.UnsignedByteType);
+    texture.needsUpdate = true;
+    texture.flipY = true;
+
+    this.texture = texture;
+  }
+
+  updateTexture(imageData) {
+    this.texture.image.data = formatImageData(imageData);
+    this.texture.needsUpdate = true;
   }
 
   initMaterial() {
@@ -128,16 +142,11 @@ export default class {
   initCoinPattern() {
     const scene = this.scene;
 
-    const texture = new THREE.DataTexture(formatImageData(this.imageData),
-      this.imageData.width, this.imageData.height, THREE.RGBAFormat, THREE.UnsignedByteType);
-    texture.needsUpdate = true;
-    texture.flipY = true;
-
     const circleGeometry = new THREE.CircleBufferGeometry(RADIUS + (THICKNESS / 4), SEGMENTS);
 
     const circleMaterial = this.material.clone();
     Object.assign(circleMaterial, {
-      bumpMap: texture,
+      bumpMap: this.texture,
       bumpScale: 0.05,
     });
 
@@ -152,10 +161,10 @@ export default class {
 
     const geometry = new THREE.PlaneBufferGeometry((RADIUS * 2) + (THICKNESS / 2),
       (RADIUS * 2) + (THICKNESS / 2),
-      this.imageData.width, this.imageData.height);
+      this.texture.image.width, this.texture.image.height);
 
     const material = new THREE.MeshBasicMaterial({
-      map: texture,
+      map: this.texture,
       blending: THREE.NormalBlending,
       transparent: true,
     });
@@ -192,6 +201,15 @@ export default class {
     this.cameraCtrl = controls;
   }
 
+  stopRotate() {
+    this.cameraCtrl.autoRotate = false;
+    this.cameraCtrl.reset();
+  }
+
+  startRotate() {
+    this.cameraCtrl.autoRotate = true;
+  }
+
   render() {
     this.cameraCtrl.update();
     this.renderer.render(this.scene, this.camera);
@@ -215,7 +233,7 @@ export default class {
   resize4Save() {
     this.camera.aspect = 1;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(this.imageData.width, this.imageData.height);
+    this.renderer.setSize(this.texture.image.width, this.texture.image.height);
   }
 
   getPngBlob(callback) {
@@ -246,8 +264,8 @@ export default class {
       workers: 4,
       quality: 10,
       workerScript: './libs/gif.worker.js',
-      width: this.imageData.width,
-      height: this.imageData.height,
+      width: this.texture.image.width,
+      height: this.texture.image.height,
       transparent: 0,
     });
 

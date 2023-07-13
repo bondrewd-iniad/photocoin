@@ -1,9 +1,9 @@
 <template>
   <div class="root">
-    <div id="canvasFrame" :style="{ maxWidth: `${Math.min(imageData.width / radius, 500)}px` }">
+    <div id="canvasFrame" :style="{ maxWidth: `${Math.min(imageData.width, 500)}px` }">
       <div>
-        <div class="frameBorder" :style="{ width: `${(radius + 0.02) * 100}%`, height: `${(radius + 0.02) * 100}%` }"/>
-        <canvas ref="canvas" :style="{ width: 100 * radius + '%', height: 100 * radius + '%' }"/>
+        <div class="frameBorder" :style="{ width: '102%', height: '102%' }"/>
+        <canvas ref="canvas" :style="{ width: '100%', height: '100%' }"/>
       </div>
     </div>
     <div class="controls">
@@ -15,12 +15,11 @@
 </template>
 
 <script>
-import detectCanvas from '@/utils/detectCanvas';
 import ThresholdBar from '@/components/ThresholdBar';
 
 export default {
   components: { ThresholdBar },
-  props: ['onCancel', 'onDecide', 'onChangeThreshold', 'threshold', 'imageData', 'radius'],
+  props: ['onCancel', 'onDecide', 'onChangeThreshold', 'threshold', 'imageData'],
   data() {
     return {
       ctx: null,
@@ -44,15 +43,7 @@ export default {
     },
     draw() {
       const tmpImageData = this.ctx.getImageData(0, 0, this.imageData.width, this.imageData.height);
-      tmpImageData.data.set(detectCanvas(
-        {
-          data: new Uint8ClampedArray(this.imageData.data),
-          width: this.imageData.width,
-        },
-        this.threshold,
-        1,
-        1,
-      ).data);
+      tmpImageData.data.set(this.imageData.data);
       this.ctx.putImageData(tmpImageData, 0, 0);
     },
   },
