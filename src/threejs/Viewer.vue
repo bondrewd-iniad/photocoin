@@ -14,7 +14,6 @@
         <img :src="url"/>
       </div>
       <div class="social">
-        <div class="fb-share-button" data-layout="button_count" data-size="large"/>
         <a class="twitter-share-button" href="https://twitter.com/share" data-dnt="true" data-size="large"/>
       </div>
       <div class="closeBtn" @click="closeSaveArea">Close</div>
@@ -53,8 +52,7 @@ export default {
       setTimeout(() => this.threeCtrl.pause());
 
       if (!this.snsInit) {
-        /* global FB, twttr */
-        FB.XFBML.parse(this.$refs.saveArea);
+        /* global twttr */
         twttr.widgets.load(this.$refs.saveArea);
         this.snsInit = true;
       }

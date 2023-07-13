@@ -55,9 +55,10 @@ export default {
 
 <style>
 * {
- margin: 0;
- padding: 0;
- user-select: none;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  letter-spacing: 0.1em;
 }
 </style>
 

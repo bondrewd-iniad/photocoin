@@ -3,10 +3,14 @@
     <div class="main" :style="{ backgroundImage: 'url(./image/back.jpg)' }">
       <div class="container" ref="container" />
       <div class="btnFrame">
-        <div class="btnDesc">Select Photo Image</div>
-        <div class="btn" @click="onStart">Camera</div>
+        <div class="btn" @click="onStart">
+          <img src="../assets/cameraIcon.svg"/>
+          <div>Camera</div>
+        </div>
         <div class="btn">
-          Image<input type="file" class="file" accept="image/*" @change="onSelectFile" />
+          <img src="../assets/photoIcon.svg"/>
+          <div>Image</div>
+          <input type="file" class="file" accept="image/*" @change="onSelectFile" />
         </div>
       </div>
     </div>
@@ -97,43 +101,30 @@ export default {
 }
 
 .btnFrame {
+  display: flex;
+  gap: 32px;
   position: absolute;
   left: 50%;
   bottom: 80px;
   transform: translateX(-50%);
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.9);
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.btnDesc {
-  padding: 12px 45px;
-  color: #222;
-  font-size: 32px;
-  font-weight: bold;
-  border-bottom: 1px solid #999;
-}
-
-.btnDesc + div {
-  border-right: 1px solid #999;
 }
 
 .btn {
   cursor: pointer;
   transition: 0.25s;
   font-size: 24px;
-  color: #06f;
   float: left;
-  width: 50%;
+  width: 120px;
   padding: 10px 0;
   box-sizing: border-box;
   position: relative;
+  background: #fff;
+  border-radius: 5px;
+  transition: 0.2s;
 }
 
 .btn:hover {
-  background: rgba(60, 60, 60, 0.9);
-  color: #fff;
+  transform: scale(1.05);
 }
 
 .file {
@@ -149,11 +140,6 @@ export default {
 @media screen and (max-width: 500px) {
   .btnFrame {
     bottom: 70px;
-  }
-
-  .btnDesc {
-    padding: 8px 45px;
-    font-size: 20px;
   }
 
   .btn {
