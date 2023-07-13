@@ -1,5 +1,4 @@
 export default function (imageData, threshold, radius, mode) {
-  /* eslint-disable no-param-reassign  */
   const data = imageData.data;
   const length = imageData.width;
 
