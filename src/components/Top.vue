@@ -109,21 +109,20 @@ export default {
   gap: 32px;
   position: absolute;
   left: 50%;
-  bottom: 80px;
+  bottom: 40px;
   transform: translateX(-50%);
 }
 
 .btn {
   cursor: pointer;
   transition: 0.25s;
-  font-size: 24px;
-  float: left;
+  font-size: 18px;
   width: 120px;
-  padding: 10px 0;
+  padding: 8px 0;
   box-sizing: border-box;
   position: relative;
   background: #fff;
-  border-radius: 5px;
+  border-radius: 8px;
   transition: 0.2s;
 }
 
@@ -139,16 +138,5 @@ export default {
   height: 100%;
   opacity: 0;
   cursor: pointer;
-}
-
-@media screen and (max-width: 500px) {
-  .btnFrame {
-    bottom: 70px;
-  }
-
-  .btn {
-    font-size: 16px;
-    padding: 8px 0;
-  }
 }
 </style>

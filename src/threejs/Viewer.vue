@@ -3,15 +3,26 @@
     <div class="main" :style="{ backgroundImage: 'url(./image/back.jpg)' }">
       <div class="container" ref="container"/>
       <div class="btnFrame">
+        <div :style="{ display: 'flex', gap: '24px', justifyContent: 'center' }">
+          <div class="btn" @click="onClose">
+            <img src="../assets/topIcon.svg"/>
+            <div>HOME</div>
+          </div>
+          <div class="btn" @click="onSaveGif">
+            <img src="../assets/photoDownIcon.svg"/>
+            <div>GIF</div>
+          </div>
+          <div class="btn" @click="onSavePng">
+            <img src="../assets/photoDownIcon.svg"/>
+            <div>PNG</div>
+          </div>
+        </div>
         <ThresholdBar
           :value="threshold"
           :onChange="onChangeThreshold"
           :onSeekStart="onSeekStart"
           :onSeekEnd="onSeekEnd"
         />
-        <div class="btn" @click="onSavePng">Save as PNG</div>
-        <div class="btn" @click="onSaveGif">Save as GIF</div>
-        <div class="btn" @click="onClose">TOP</div>
       </div>
     </div>
     <div class="saveArea" ref="saveArea" v-show="url">
@@ -108,23 +119,24 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 64px;
 }
 
 .btn {
-  float: left;
-  width: 33.33%;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 12px 0;
-  font-size: 24px;
   cursor: pointer;
-  color: #222;
   transition: 0.25s;
+  font-size: 18px;
+  width: 104px;
+  padding: 8px 0;
+  box-sizing: border-box;
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  transition: 0.2s;
 }
 
 .btn:hover {
-  background: rgba(120, 120, 120, 0.8);
-  color: #fff;
+  transform: scale(1.05);
 }
 
 .saveArea {
@@ -132,7 +144,7 @@ export default {
   z-index: 1;
   min-height: 100vh;
   background: #fff;
-  padding: 20px 0 50px;
+  padding: 16px 0;
   box-sizing: border-box;
   color: #222;
 }
@@ -149,26 +161,18 @@ export default {
 }
 
 .closeBtn {
-  border-radius: 5px;
-  background: #666;
+  border-radius: 8px;
+  border: 1px solid #223;
   margin: 30px auto 0;
-  color: #fff;
   cursor: pointer;
   width: 100px;
-  padding: 12px 0;
-  font-size: 20px;
+  padding: 8px 0;
+  font-size: 18px;
   font-weight: bold;
-  transition: 0.25s;
+  transition: 0.2s;
 }
 
 .closeBtn:hover {
-  background: #ddd;
-  color: #222;
-}
-
-@media screen and (max-width: 500px) {
-  .btn {
-    font-size: 18px;
-  }
+  transform: scale(1.05);
 }
 </style>

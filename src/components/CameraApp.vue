@@ -7,36 +7,27 @@
     </div>
     <video ref="video" playsinline @canplaythrough="startRendering"/>
     <div class="controls">
-      <ThresholdBar :value="threshold" :onChange="onChangeThreshold"/>
       <div class="backBtn" @click="closeApp"><img src="../assets/home.svg"/></div>
       <div class="facingBtn" v-if="!isPC" @click="changeFacing"><img src="../assets/camera.svg"/></div>
       <div class="shutter" @click="shoot"/>
     </div>
-
     <div class="blackFilter" ref="blackFilter"/>
-    <CheckImage v-if="checking" :onCancel="onCancel" :onChangeThreshold="onChangeThreshold" :onDecide="onDecide" :threshold="threshold" :imageData="imageData"/>
   </div>
 </template>
 
 <script>
 import getCam from '@/utils/getCam';
-import detectCanvas from '@/utils/detectCanvas';
-import CheckImage from '@/components/CheckImage';
 import osType from '@/utils/osType';
-import ThresholdBar from '@/components/ThresholdBar';
 
 export default {
-  props: ['onClose', 'onSet', 'threshold', 'onChangeThreshold'],
-  components: { CheckImage, ThresholdBar },
+  props: ['onClose', 'onSet'],
   data() {
     return {
       reqID: null,
       vw: null,
       vh: null,
-      length: null,
+      length: 0,
       ctx: null,
-      imageData: null,
-      checking: false,
       facingMode: 'environment',
       isPC: osType.isPC(),
     };
@@ -82,7 +73,7 @@ export default {
       ctx.drawImage(this.$refs.video, (this.vw - length) / 2, (this.vh - length) / 2,
         length, length, 0, 0, length, length);
       const imageData = ctx.getImageData(0, 0, length, length);
-      ctx.putImageData(detectCanvas(imageData, this.threshold, 0), 0, false);
+      ctx.putImageData(imageData, 0, false);
       this.reqID = requestAnimationFrame(this.render.bind(this));
     },
     closeApp() {
@@ -103,21 +94,16 @@ export default {
 
         ctx.drawImage(this.$refs.video, (this.vw - length) / 2, (this.vh - length) / 2,
           length, length, 0, 0, length, length);
-        this.imageData = ctx.getImageData(0, 0, length, length);
+        const imageData = ctx.getImageData(0, 0, length, length);
         this.stopRendering();
-        this.checking = true;
+        this.onSet(imageData);
       }, 500);
     },
     changeFacing() {
       this.facingMode = this.facingMode === 'user' ? 'environment' : 'user';
       this.setVideo();
     },
-    onDecide(imageData) {
-      this.checking = false;
-      this.onSet(imageData);
-    },
     onCancel() {
-      this.checking = false;
       this.setVideo();
     },
   },
@@ -136,6 +122,8 @@ export default {
 
 #canvasFrame {
   margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 #canvasFrame > div {
@@ -189,11 +177,11 @@ video {
 }
 
 .shutter {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 2px solid #666;
-  box-shadow: 0 0 0 8px #fff;
+  border: 4px solid #000;
+  box-shadow: 0 0 0 6px #fff;
   background: #fff;
   cursor: pointer;
   transition: .2s;

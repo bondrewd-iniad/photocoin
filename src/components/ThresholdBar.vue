@@ -54,8 +54,8 @@ export default {
 <style scoped>
 .seekBarFrame {
   position: absolute;
-  bottom: 100%;
-  margin-bottom: 10px;
+  top: 100%;
+  margin-top: 16px;
   width: 80%;
   left: 10%;
   height: 30px;
