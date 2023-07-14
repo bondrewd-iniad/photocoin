@@ -119,7 +119,7 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 64px;
+  bottom: 72px;
 }
 
 .btn {

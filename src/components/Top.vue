@@ -3,14 +3,14 @@
     <div class="main" :style="{ backgroundImage: 'url(./image/back.jpg)' }">
       <div class="container" ref="container" />
       <div class="btnFrame">
-        <div class="btn" @click="onStart">
-          <img src="../assets/cameraIcon.svg"/>
-          <div>Camera</div>
-        </div>
         <div class="btn">
           <img src="../assets/photoIcon.svg"/>
           <div>Image</div>
           <input type="file" class="file" accept="image/*" @change="onSelectFile" />
+        </div>
+        <div class="btn" @click="onStart">
+          <img src="../assets/cameraIcon.svg"/>
+          <div>Camera</div>
         </div>
       </div>
     </div>
@@ -31,38 +31,30 @@ export default {
   },
   methods: {
     onSelectFile(e) {
-      const file = e.target.files[0];
-      loadImage.parseMetaData(file, (data) => {
-        loadImage(
-          file,
-          (image) => {
-            const imageLength = Math.min(image.width, image.height);
-            const length = Math.min(500, imageLength);
-            const canvas = document.createElement('canvas');
-            canvas.width = length;
-            canvas.height = length;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(
-              image,
-              (image.width - imageLength) / 2,
-              (image.height - imageLength) / 2,
-              imageLength,
-              imageLength,
-              0,
-              0,
-              length,
-              length,
-            );
-            this.onInput(ctx.getImageData(0, 0, length, length));
-          },
-          {
-            canvas: true,
-            cover: true,
-            aspectRatio: 1,
-            orientation: data.exif ? data.exif.get('Orientation') : 0,
-          },
-        );
-      });
+      loadImage(
+        e.target.files[0],
+        (image) => {
+          const imageLength = Math.min(image.width, image.height);
+          const length = Math.min(500, imageLength);
+          const canvas = document.createElement('canvas');
+          canvas.width = length;
+          canvas.height = length;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(
+            image,
+            (image.width - imageLength) / 2,
+            (image.height - imageLength) / 2,
+            imageLength,
+            imageLength,
+            0,
+            0,
+            length,
+            length,
+          );
+          this.onInput(ctx.getImageData(0, 0, length, length));
+        },
+        { canvas: true, cover: true, aspectRatio: 1 },
+      );
     },
   },
   mounted() {
